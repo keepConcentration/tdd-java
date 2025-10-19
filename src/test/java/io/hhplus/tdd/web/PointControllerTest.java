@@ -36,6 +36,9 @@ class PointControllerTest {
   @MockBean
   private PointChargingService pointChargingService;
 
+  @MockBean
+  private PointUsingService pointUsingService;
+
   @Test
   @DisplayName("포인트를 정상적으로 조회한다.")
   void read() throws Exception {
@@ -80,5 +83,28 @@ class PointControllerTest {
         .andExpect(status().isNoContent());
 
     verify(pointChargingService, times(1)).charge(anyLong(), anyLong());
+  }
+
+  @Test
+  @DisplayName("포인트를 정상적으로 사용한다.")
+  void use() throws Exception {
+    // given
+    long id = 1L;
+    long amount = 100L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .patch("/points/" + id + "/use")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8)
+        .content("""
+            {"amount": %d}
+            """.formatted(amount));
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isNoContent());
+
+    verify(pointUsingService, times(1)).use(anyLong(), anyLong());
   }
 }
