@@ -1,7 +1,9 @@
 package io.hhplus.tdd.web;
 
+import io.hhplus.tdd.point.application.PointChargingService;
 import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.domain.model.PointHistory;
+import io.hhplus.tdd.web.dto.PointChargeRequestDto;
 import io.hhplus.tdd.web.dto.PointResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ import java.util.List;
 public class PointController {
 
   private final PointReadingService pointReadingService;
+
+  private final PointChargingService pointChargingService;
 
   /**
    * 특정 유저의 포인트를 조회합니다.
@@ -40,8 +44,9 @@ public class PointController {
    * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
    */
   @PatchMapping("/{id}/charge")
-  public void charge(@PathVariable long id, @RequestBody long amount) {
-
+  public ResponseEntity<Void> charge(@PathVariable long id, @RequestBody PointChargeRequestDto requestDto) {
+    pointChargingService.charge(id, requestDto.getAmount());
+    return ResponseEntity.noContent().build();
   }
 
   /**
