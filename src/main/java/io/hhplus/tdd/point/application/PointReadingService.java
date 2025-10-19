@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.application;
 
+import io.hhplus.tdd.point.domain.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PointReadingService {
 
+  private final PointService PointService;
+
   public long read(long id) {
-    return 0L;
+    return PointService.read(id).point();
   }
 }
