@@ -1,10 +1,12 @@
 package io.hhplus.tdd.web;
 
+import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.domain.model.PointHistory;
-import io.hhplus.tdd.point.domain.model.UserPoint;
+import io.hhplus.tdd.web.dto.PointResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +18,14 @@ import java.util.List;
 @ResponseStatus(HttpStatus.OK)
 public class PointController {
 
+  private final PointReadingService pointReadingService;
+
   /**
-   * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
+   * 특정 유저의 포인트를 조회합니다.
    */
   @GetMapping("/{id}")
-  public UserPoint read(@PathVariable long id) {
-    return new UserPoint(0, 0, 0);
+  public ResponseEntity<PointResponseDto> read(@PathVariable long id) {
+    return ResponseEntity.ok(new PointResponseDto(pointReadingService.read(id)));
   }
 
   /**
