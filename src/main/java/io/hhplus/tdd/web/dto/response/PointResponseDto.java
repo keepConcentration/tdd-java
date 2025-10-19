@@ -1,4 +1,4 @@
-package io.hhplus.tdd.web.dto;
+package io.hhplus.tdd.web.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
