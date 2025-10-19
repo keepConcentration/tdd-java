@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import io.hhplus.tdd.point.application.PointChargingService;
 import io.hhplus.tdd.point.application.PointReadingService;
+import io.hhplus.tdd.point.application.PointUsingService;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

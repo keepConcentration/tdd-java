@@ -2,9 +2,11 @@ package io.hhplus.tdd.web;
 
 import io.hhplus.tdd.point.application.PointChargingService;
 import io.hhplus.tdd.point.application.PointReadingService;
+import io.hhplus.tdd.point.application.PointUsingService;
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.web.dto.PointChargeRequestDto;
 import io.hhplus.tdd.web.dto.PointResponseDto;
+import io.hhplus.tdd.web.dto.PointUseRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ public class PointController {
   private final PointReadingService pointReadingService;
 
   private final PointChargingService pointChargingService;
+
+  private final PointUsingService pointUsingService;
 
   /**
    * 특정 유저의 포인트를 조회합니다.
@@ -50,10 +54,11 @@ public class PointController {
   }
 
   /**
-   * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
+   * 특정 유저의 포인트를 사용합니다.
    */
   @PatchMapping("/{id}/use")
-  public void use(@PathVariable long id, @RequestBody long amount) {
-
+  public ResponseEntity<Void> use(@PathVariable long id, @RequestBody PointUseRequestDto requestDto) {
+    pointUsingService.use(id, requestDto.getAmount());
+    return ResponseEntity.noContent().build();
   }
 }
