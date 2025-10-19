@@ -14,4 +14,8 @@ public class PointService {
   public UserPoint read(long id) {
     return userPointRepository.read(id);
   }
+
+  public void update(UserPoint userPoint) {
+    userPointRepository.save(userPoint);
+  }
 }

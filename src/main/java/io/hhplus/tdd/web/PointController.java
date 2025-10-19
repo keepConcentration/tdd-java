@@ -41,7 +41,7 @@ public class PointController {
   }
 
   /**
-   * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
+   * 특정 유저의 포인트를 충전합니다.
    */
   @PatchMapping("/{id}/charge")
   public ResponseEntity<Void> charge(@PathVariable long id, @RequestBody PointChargeRequestDto requestDto) {
