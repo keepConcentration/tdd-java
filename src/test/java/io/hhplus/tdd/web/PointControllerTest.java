@@ -11,7 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import io.hhplus.tdd.point.application.PointChargingService;
 import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.application.PointUsingService;
+import io.hhplus.tdd.point.domain.model.PointHistory;
+import io.hhplus.tdd.point.domain.model.TransactionType;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +42,9 @@ class PointControllerTest {
 
   @MockBean
   private PointUsingService pointUsingService;
+
+  @MockBean
+  private PointHistoryReadingService pointHistoryReadingService;
 
   @Test
   @DisplayName("포인트를 정상적으로 조회한다.")
@@ -107,5 +113,44 @@ class PointControllerTest {
         .andExpect(status().isNoContent());
 
     verify(pointUsingService, times(1)).use(anyLong(), anyLong());
+  }
+
+  @Test
+  @DisplayName("포인트 사용 내역을 정상적으로 조회한다.")
+  void readHistories() throws Exception {
+    // given
+    long id = 1L;
+    long currentTimestamp = System.currentTimeMillis();
+    when(pointHistoryReadingService.readHistories(id))
+        .thenReturn(List.of(
+            PointHistoryResponseDto.of(new PointHistory(1L, 1L, 100L, TransactionType.CHARGE,
+                currentTimestamp)),
+            PointHistoryResponseDto.of(new PointHistory(2L, 1L, 100L, TransactionType.USE,
+                currentTimestamp))
+            )
+        );
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .get("/points/" + id + "/histories")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8);
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].id").value("1"))
+        .andExpect(jsonPath("$[0].userId").value("1"))
+        .andExpect(jsonPath("$[0].amount").value("100"))
+        .andExpect(jsonPath("$[0].type").value(TransactionType.CHARGE.name()))
+        .andExpect(jsonPath("$[0].updateMillis").value(currentTimestamp))
+        .andExpect(jsonPath("$[1].id").value("2"))
+        .andExpect(jsonPath("$[1].userId").value("1"))
+        .andExpect(jsonPath("$[1].amount").value("100"))
+        .andExpect(jsonPath("$[1].type").value(TransactionType.USE.name()))
+        .andExpect(jsonPath("$[1].updateMillis").value(currentTimestamp));
+
+    verify(pointHistoryReadingService).readHistories(anyLong());
   }
 }
