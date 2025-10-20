@@ -1,10 +1,11 @@
 package io.hhplus.tdd.web;
 
 import io.hhplus.tdd.point.application.PointChargingService;
+import io.hhplus.tdd.point.application.PointHistoryReadingService;
 import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.application.PointUsingService;
-import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.web.dto.request.PointChargeRequestDto;
+import io.hhplus.tdd.web.dto.response.PointHistoryResponseDto;
 import io.hhplus.tdd.web.dto.response.PointResponseDto;
 import io.hhplus.tdd.web.dto.request.PointUseRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class PointController {
 
   private final PointUsingService pointUsingService;
 
+  private final PointHistoryReadingService pointHistoryReadingService;
+
   /**
    * 특정 유저의 포인트를 조회합니다.
    */
@@ -40,8 +43,8 @@ public class PointController {
    * TODO - 특정 유저의 포인트 충전/이용 내역을 조회하는 기능을 작성해주세요.
    */
   @GetMapping("/{id}/histories")
-  public List<PointHistory> readHistories(@PathVariable long id) {
-    return List.of();
+  public ResponseEntity<List<PointHistoryResponseDto>> readHistories(@PathVariable long id) {
+    return ResponseEntity.ok(pointHistoryReadingService.readHistories(id));
   }
 
   /**

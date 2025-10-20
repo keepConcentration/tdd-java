@@ -9,10 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.hhplus.tdd.point.application.PointChargingService;
+import io.hhplus.tdd.point.application.PointHistoryReadingService;
 import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.application.PointUsingService;
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.point.domain.model.TransactionType;
+import io.hhplus.tdd.web.dto.response.PointHistoryResponseDto;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -123,10 +125,10 @@ class PointControllerTest {
     long currentTimestamp = System.currentTimeMillis();
     when(pointHistoryReadingService.readHistories(id))
         .thenReturn(List.of(
-            PointHistoryResponseDto.of(new PointHistory(1L, 1L, 100L, TransactionType.CHARGE,
-                currentTimestamp)),
-            PointHistoryResponseDto.of(new PointHistory(2L, 1L, 100L, TransactionType.USE,
-                currentTimestamp))
+                PointHistoryResponseDto.of(new PointHistory(1L, 1L, 100L, TransactionType.CHARGE,
+                    currentTimestamp)),
+                PointHistoryResponseDto.of(new PointHistory(2L, 1L, 100L, TransactionType.USE,
+                    currentTimestamp))
             )
         );
 
