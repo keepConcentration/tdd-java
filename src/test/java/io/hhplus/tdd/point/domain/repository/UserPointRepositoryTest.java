@@ -28,4 +28,27 @@ class UserPointRepositoryTest {
     assertEquals(id, userPoint.id());
     assertEquals(amount, userPoint.point());
   }
+
+  @Test
+  @DisplayName("저장 후 조회했을 때 같은 Point를 반환한다.")
+  void saveAndRead() {
+    // given
+    long id = 1L;
+    long amount = 100L;
+    UserPointTable userPointTable = new UserPointTable();
+    UserPointRepository userPointRepository = new UserPointRepository(userPointTable);
+
+    UserPoint savedUserPoint = UserPoint.of(id, amount);
+    userPointRepository.save(savedUserPoint);
+
+    // when
+    UserPoint userPoint = userPointRepository.read(id);
+
+    // then
+    assertNotNull(userPoint);
+    assertEquals(savedUserPoint.id(), userPoint.id());
+    assertEquals(savedUserPoint.point(), userPoint.point());
+
+
+  }
 }
