@@ -15,4 +15,8 @@ public class PointHistoryService {
   public List<PointHistory> readHistories(long userId) {
     return pointHistoryRepository.readHistories(userId);
   }
+
+  public void save(PointHistory pointHistory) {
+
+  }
 }
