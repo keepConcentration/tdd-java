@@ -13,4 +13,9 @@ public record UserPoint(
   public static UserPoint of(long id, long point) {
     return new UserPoint(id, point, System.currentTimeMillis());
   }
+
+  public void charge(long amount) {
+
+  }
+
 }
