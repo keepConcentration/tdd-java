@@ -30,7 +30,7 @@ class UserPointRepositoryTest {
   }
 
   @Test
-  @DisplayName("저장 후 조회했을 때 같은 Point를 반환한다.")
+  @DisplayName("저장 후 조회했을 때 같은 UserPoint를 반환한다.")
   void saveAndRead() {
     // given
     long id = 1L;
@@ -39,16 +39,14 @@ class UserPointRepositoryTest {
     UserPointRepository userPointRepository = new UserPointRepository(userPointTable);
 
     UserPoint savedUserPoint = UserPoint.of(id, amount);
-    userPointRepository.save(savedUserPoint);
 
     // when
+    userPointRepository.save(savedUserPoint);
     UserPoint userPoint = userPointRepository.read(id);
 
     // then
     assertNotNull(userPoint);
     assertEquals(savedUserPoint.id(), userPoint.id());
     assertEquals(savedUserPoint.point(), userPoint.point());
-
-
   }
 }
