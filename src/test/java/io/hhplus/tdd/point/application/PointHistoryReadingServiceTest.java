@@ -5,11 +5,14 @@ import static org.mockito.Mockito.when;
 
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.point.domain.model.TransactionType;
+import io.hhplus.tdd.point.domain.service.PointHistoryService;
+import io.hhplus.tdd.web.dto.response.PointHistoryResponseDto;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
