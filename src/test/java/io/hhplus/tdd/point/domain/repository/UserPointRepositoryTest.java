@@ -10,15 +10,19 @@ import org.junit.jupiter.api.Test;
 class UserPointRepositoryTest {
 
   @Test
-  @DisplayName("특정 회원의 포인트를 올바르게 조회한다.")
+  @DisplayName("특정 회원의 포인트만 올바르게 조회한다.")
   void read() {
     // given
     long id = 1L;
     long amount = 100L;
     UserPointTable userPointTable = new UserPointTable();
-    userPointTable.insertOrUpdate(id, amount);
-
     UserPointRepository userPointRepository = new UserPointRepository(userPointTable);
+
+    UserPoint savedUserPoint1 = UserPoint.of(id, amount);
+    UserPoint savedUserPoint2 = UserPoint.of(2L, amount);
+
+    userPointRepository.save(savedUserPoint1);
+    userPointRepository.save(savedUserPoint2);
 
     // when
     UserPoint userPoint = userPointRepository.read(id);
