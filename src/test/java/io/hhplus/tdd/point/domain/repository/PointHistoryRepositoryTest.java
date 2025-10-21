@@ -15,14 +15,14 @@ class PointHistoryRepositoryTest {
   @DisplayName("userId에 해당하는 포인트 이력을 정상적으로 조회한다.")
   void readHistories() {
     // given
-    PointHistoryRepository pointHistoryRepository = new PointHistoryRepository();
     PointHistoryTable pointHistoryTable = new PointHistoryTable();
+    PointHistoryRepository pointHistoryRepository = new PointHistoryRepository(pointHistoryTable);
     long userId = 1L;
     long currentTimestamp1 = System.currentTimeMillis();
     long currentTimestamp2 = System.currentTimeMillis() + 1000L;
 
     PointHistory history1 = new PointHistory(1L, userId, 100L, TransactionType.CHARGE, currentTimestamp1);
-    PointHistory history2 = new PointHistory(1L, userId, 100L, TransactionType.USE, currentTimestamp2);
+    PointHistory history2 = new PointHistory(2L, userId, 100L, TransactionType.USE, currentTimestamp2);
 
     pointHistoryTable.insert(history1.userId(), history1.amount(), history1.type(), history1.updateMillis());
     pointHistoryTable.insert(history2.userId(), history2.amount(), history2.type(), history2.updateMillis());
