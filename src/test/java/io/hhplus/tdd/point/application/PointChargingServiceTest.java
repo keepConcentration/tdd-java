@@ -41,5 +41,6 @@ class PointChargingServiceTest {
 
     // then
     verify(pointService, times(1)).update(any());
+    verify(userPoint, times(1)).charge(anyLong());
   }
 }
