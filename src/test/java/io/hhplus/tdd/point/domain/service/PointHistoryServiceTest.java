@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.point.domain.model.TransactionType;
+import io.hhplus.tdd.point.domain.repository.PointHistoryRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
