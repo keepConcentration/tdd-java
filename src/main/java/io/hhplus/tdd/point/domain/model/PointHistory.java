@@ -8,4 +8,7 @@ public record PointHistory(
     long updateMillis
 ) {
 
+  public static PointHistory forCharge(long userId, long amount) {
+    return null;
+  }
 }
