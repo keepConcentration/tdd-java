@@ -18,7 +18,7 @@ class PointHistoryReadingServiceTest {
   @InjectMocks
   private PointHistoryReadingService pointHistoryReadingService;
 
-  @InjectMocks
+  @Mock
   private PointHistoryService pointHistoryService;
 
   @Test
