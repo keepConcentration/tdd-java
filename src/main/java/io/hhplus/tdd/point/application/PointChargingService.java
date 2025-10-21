@@ -13,7 +13,7 @@ public class PointChargingService {
 
   public void charge(long userId, long amount) {
     UserPoint userPoint = pointService.read(userId);
-    userPoint.charge(amount);
-    pointService.update(UserPoint.of(userId, amount));
+    UserPoint chargedPoint = userPoint.charge(amount);
+    pointService.update(chargedPoint);
   }
 }
