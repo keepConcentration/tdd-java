@@ -3,6 +3,7 @@ package io.hhplus.tdd.point.application;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +32,7 @@ class PointChargingServiceTest {
     // given
     long userId = 1L;
     long amount = 100L;
-    UserPoint userPoint = UserPoint.of(userId, amount);
+    UserPoint userPoint = mock(UserPoint.class);
     when(pointService.read(anyLong()))
         .thenReturn(userPoint);
 
