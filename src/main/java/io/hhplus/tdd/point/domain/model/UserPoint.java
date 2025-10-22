@@ -22,24 +22,36 @@ public record UserPoint(
 
   public UserPoint charge(long amount) {
     long newPoint = point + amount;
-    if (newPoint > MAX_POINT) {
-      throw new BusinessException(ErrorCode.EXCEED_MAX_POINT);
-    }
+    validateMaxPoint(newPoint);
     return create(id, newPoint);
   }
 
   public UserPoint use(long amount) {
-    if (amount % USE_POINT_UNIT != 0) {
-      throw new BusinessException(ErrorCode.INVALID_POINT_UNIT);
-    }
+    validateUseUnit(amount);
     long newPoint = point - amount;
-    if (newPoint < 0) {
-      throw new BusinessException(ErrorCode.INSUFFICIENT_POINT);
-    }
+    validateSufficientPoint(newPoint);
     return create(id, newPoint);
   }
 
   private static UserPoint create(long id, long point) {
     return new UserPoint(id, point, System.currentTimeMillis());
+  }
+
+  private static void validateMaxPoint(long point) {
+    if (point > MAX_POINT) {
+      throw new BusinessException(ErrorCode.EXCEED_MAX_POINT);
+    }
+  }
+
+  private static void validateUseUnit(long amount) {
+    if (amount % USE_POINT_UNIT != 0) {
+      throw new BusinessException(ErrorCode.INVALID_POINT_UNIT);
+    }
+  }
+
+  private static void validateSufficientPoint(long point) {
+    if (point < 0) {
+      throw new BusinessException(ErrorCode.INSUFFICIENT_POINT);
+    }
   }
 }
