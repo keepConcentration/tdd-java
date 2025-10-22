@@ -17,6 +17,11 @@ public class PointHistoryRepository {
   }
 
   public PointHistory save(PointHistory pointHistory) {
-    return null;
+    return pointHistoryTable.insert(
+        pointHistory.userId(),
+        pointHistory.amount(),
+        pointHistory.type(),
+        pointHistory.updateMillis()
+    );
   }
 }
