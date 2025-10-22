@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PointHistoryTest {
 
     @Test
-    @DisplayName("충전 이력 생성 시 userId와 amount가 올바르게 설정된다")
-    void forCharge_ShouldCreateHistoryWithCorrectUserIdAndAmount() {
+    @DisplayName("충전 이력 생성 시 userId, amount, 트랜잭션 타입, id가 올바르게 설정된다")
+    void forCharge_ShouldCreateHistoryWithCorrectFields() {
         // given
         long userId = 1L;
         long amount = 1000L;
@@ -19,21 +19,9 @@ class PointHistoryTest {
 
         // then
         assertThat(history).isNotNull();
+        assertThat(history.id()).isZero();
         assertThat(history.userId()).isEqualTo(userId);
         assertThat(history.amount()).isEqualTo(amount);
-    }
-
-    @Test
-    @DisplayName("충전 이력 생성 시 트랜잭션 타입이 CHARGE로 설정된다")
-    void forCharge_ShouldSetTransactionTypeToCharge() {
-        // given
-        long userId = 1L;
-        long amount = 1000L;
-
-        // when
-        PointHistory history = PointHistory.forCharge(userId, amount);
-
-        // then
         assertThat(history.type()).isEqualTo(TransactionType.CHARGE);
     }
 
