@@ -155,4 +155,122 @@ class PointControllerTest {
 
     verify(pointHistoryReadingService).readHistories(anyLong());
   }
+
+  @Test
+  @DisplayName("포인트 조회 시 id가 음수면 400 에러를 반환한다.")
+  void read_ShouldReturn400_WhenIdIsNegative() throws Exception {
+    // given
+    long negativeId = -1L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .get("/points/" + negativeId)
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8);
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("포인트 이력 조회 시 id가 음수면 400 에러를 반환한다.")
+  void readHistories_ShouldReturn400_WhenIdIsNegative() throws Exception {
+    // given
+    long negativeId = -1L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .get("/points/" + negativeId + "/histories")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8);
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("포인트 충전 시 id가 음수면 400 에러를 반환한다.")
+  void charge_ShouldReturn400_WhenIdIsNegative() throws Exception {
+    // given
+    long negativeId = -1L;
+    long amount = 100L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .patch("/points/" + negativeId + "/charge")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8)
+        .content("""
+            {"amount": %d}
+            """.formatted(amount));
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("포인트 충전 시 amount가 음수면 400 에러를 반환한다.")
+  void charge_ShouldReturn400_WhenAmountIsNegative() throws Exception {
+    // given
+    long id = 1L;
+    long negativeAmount = -100L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .patch("/points/" + id + "/charge")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8)
+        .content("""
+            {"amount": %d}
+            """.formatted(negativeAmount));
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("포인트 사용 시 id가 음수면 400 에러를 반환한다.")
+  void use_ShouldReturn400_WhenIdIsNegative() throws Exception {
+    // given
+    long negativeId = -1L;
+    long amount = 100L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .patch("/points/" + negativeId + "/use")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8)
+        .content("""
+            {"amount": %d}
+            """.formatted(amount));
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("포인트 사용 시 amount가 음수면 400 에러를 반환한다.")
+  void use_ShouldReturn400_WhenAmountIsNegative() throws Exception {
+    // given
+    long id = 1L;
+    long negativeAmount = -100L;
+
+    // when
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        .patch("/points/" + id + "/use")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding(StandardCharsets.UTF_8)
+        .content("""
+            {"amount": %d}
+            """.formatted(negativeAmount));
+
+    // then
+    mockMvc.perform(builder)
+        .andExpect(status().isBadRequest());
+  }
 }
