@@ -17,4 +17,8 @@ public record PointHistory(
         System.currentTimeMillis()
     );
   }
+
+  public static PointHistory forUse(long userId, long amount) {
+    return null;
+  }
 }

@@ -40,4 +40,38 @@ class PointHistoryTest {
         long afterTime = System.currentTimeMillis();
         assertThat(history.updateMillis()).isBetween(beforeTime, afterTime);
     }
+
+    @Test
+    @DisplayName("사용 이력 생성 시 userId, amount, 트랜잭션 타입, id가 올바르게 설정된다")
+    void forUse_ShouldCreateHistoryWithCorrectFields() {
+        // given
+        long userId = 1L;
+        long amount = 500L;
+
+        // when
+        PointHistory history = PointHistory.forUse(userId, amount);
+
+        // then
+        assertThat(history).isNotNull();
+        assertThat(history.id()).isZero();
+        assertThat(history.userId()).isEqualTo(userId);
+        assertThat(history.amount()).isEqualTo(amount);
+        assertThat(history.type()).isEqualTo(TransactionType.USE);
+    }
+
+    @Test
+    @DisplayName("사용 이력 생성 시 updateMillis가 현재 시간으로 설정된다")
+    void forUse_ShouldSetUpdateMillisToCurrentTime() {
+        // given
+        long userId = 1L;
+        long amount = 500L;
+        long beforeTime = System.currentTimeMillis();
+
+        // when
+        PointHistory history = PointHistory.forUse(userId, amount);
+
+        // then
+        long afterTime = System.currentTimeMillis();
+        assertThat(history.updateMillis()).isBetween(beforeTime, afterTime);
+    }
 }
