@@ -18,4 +18,7 @@ public record UserPoint(
     return null;
   }
 
+  public UserPoint use(long amount) {
+    return new UserPoint(id, point - amount, System.currentTimeMillis());
+  }
 }

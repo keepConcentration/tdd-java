@@ -17,8 +17,8 @@ public class PointUsingService {
 
   public void use(long userId, long amount) {
     UserPoint userPoint = pointService.read(userId);
-    pointService.update(UserPoint.of(userId, userPoint.point() - amount));
-
+    UserPoint usedUserPoint = userPoint.use(amount);
+    pointService.update(usedUserPoint);
     pointHistoryService.save(PointHistory.forUse(userId, amount));
   }
 }
