@@ -8,14 +8,19 @@ import io.hhplus.tdd.web.dto.request.PointChargeRequestDto;
 import io.hhplus.tdd.web.dto.response.PointHistoryResponseDto;
 import io.hhplus.tdd.web.dto.response.PointResponseDto;
 import io.hhplus.tdd.web.dto.request.PointUseRequestDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/points")
 @RequiredArgsConstructor
@@ -35,7 +40,8 @@ public class PointController {
    * 특정 유저의 포인트를 조회합니다.
    */
   @GetMapping("/{id}")
-  public ResponseEntity<PointResponseDto> read(@PathVariable long id) {
+  public ResponseEntity<PointResponseDto> read(
+      @PathVariable @Positive(message = "사용자 ID는 0보다 커야 합니다.") long id) {
     return ResponseEntity.ok(new PointResponseDto(pointReadingService.read(id)));
   }
 
@@ -43,7 +49,8 @@ public class PointController {
    * TODO - 특정 유저의 포인트 충전/이용 내역을 조회하는 기능을 작성해주세요.
    */
   @GetMapping("/{id}/histories")
-  public ResponseEntity<List<PointHistoryResponseDto>> readHistories(@PathVariable long id) {
+  public ResponseEntity<List<PointHistoryResponseDto>> readHistories(
+      @PathVariable @Positive(message = "사용자 ID는 0보다 커야 합니다.") long id) {
     return ResponseEntity.ok(pointHistoryReadingService.readHistories(id));
   }
 
@@ -51,7 +58,9 @@ public class PointController {
    * 특정 유저의 포인트를 충전합니다.
    */
   @PatchMapping("/{id}/charge")
-  public ResponseEntity<Void> charge(@PathVariable long id, @RequestBody PointChargeRequestDto requestDto) {
+  public ResponseEntity<Void> charge(
+      @PathVariable @Positive(message = "사용자 ID는 0보다 커야 합니다.") long id,
+      @RequestBody @Valid PointChargeRequestDto requestDto) {
     pointChargingService.charge(id, requestDto.getAmount());
     return ResponseEntity.noContent().build();
   }
@@ -60,7 +69,9 @@ public class PointController {
    * 특정 유저의 포인트를 사용합니다.
    */
   @PatchMapping("/{id}/use")
-  public ResponseEntity<Void> use(@PathVariable long id, @RequestBody PointUseRequestDto requestDto) {
+  public ResponseEntity<Void> use(
+      @PathVariable @Min(value = 1, message = "사용자 ID는 0보다 커야 합니다.") long id,
+      @RequestBody @Valid PointUseRequestDto requestDto) {
     pointUsingService.use(id, requestDto.getAmount());
     return ResponseEntity.noContent().build();
   }
