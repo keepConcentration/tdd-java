@@ -33,4 +33,25 @@ class PointHistoryRepositoryTest {
     // then
     assertEquals(List.of(history1, history2), pointHistories);
   }
+
+  @Test
+  @DisplayName("포인트 이력을 정상적으로 저장한다.")
+  void save() {
+    // given
+    PointHistoryTable pointHistoryTable = new PointHistoryTable();
+    PointHistoryRepository pointHistoryRepository = new PointHistoryRepository(pointHistoryTable);
+    long userId = 1L;
+    long amount = 1000L;
+    PointHistory pointHistory = PointHistory.forCharge(userId, amount);
+
+    // when
+    PointHistory savedHistory = pointHistoryRepository.save(pointHistory);
+
+    // then
+    assertNotNull(savedHistory);
+    assertEquals(userId, savedHistory.userId());
+    assertEquals(amount, savedHistory.amount());
+    assertEquals(TransactionType.CHARGE, savedHistory.type());
+    assertTrue(savedHistory.id() > 0);
+  }
 }
