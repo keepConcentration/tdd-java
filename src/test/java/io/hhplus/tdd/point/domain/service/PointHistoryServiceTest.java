@@ -1,7 +1,9 @@
 package io.hhplus.tdd.point.domain.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.hhplus.tdd.point.domain.model.PointHistory;
@@ -43,5 +45,20 @@ class PointHistoryServiceTest {
 
     // then
     assertEquals(expectHistories, histories);
+  }
+
+  @Test
+  @DisplayName("포인트 이력을 정상적으로 저장한다.")
+  void save() {
+    // given
+    long userId = 1L;
+    long amount = 1000L;
+    PointHistory pointHistory = PointHistory.forCharge(userId, amount);
+
+    // when
+    pointHistoryService.save(pointHistory);
+
+    // then
+    verify(pointHistoryRepository).save(any(PointHistory.class));
   }
 }

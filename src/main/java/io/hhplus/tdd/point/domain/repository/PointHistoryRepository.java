@@ -15,4 +15,8 @@ public class PointHistoryRepository {
   public List<PointHistory> readHistories(long userId) {
     return pointHistoryTable.selectAllByUserId(userId);
   }
+
+  public PointHistory save(PointHistory pointHistory) {
+    return null;
+  }
 }
