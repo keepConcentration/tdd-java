@@ -14,13 +14,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class UserPointTest {
 
-  private static final long USER_ID = 1L;
-
   @Test
   @DisplayName("포인트를 충전하면 기존 포인트에 충전 금액이 더해진다.")
   void charge_ShouldAddAmountToCurrentPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, 1000L);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, 1000L);
 
     // when
     UserPoint charged = userPoint.charge(500L);
@@ -33,7 +32,8 @@ class UserPointTest {
   @DisplayName("포인트를 사용하면 기존 포인트에서 사용 금액이 차감된다.")
   void use_ShouldSubtractAmountFromCurrentPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, 1000L);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, 1000L);
 
     // when
     UserPoint used = userPoint.use(USE_POINT_UNIT);
@@ -47,7 +47,8 @@ class UserPointTest {
   @DisplayName(USE_POINT_UNIT + "원 단위가 아닌 금액은 사용할 수 없다.")
   void use_ShouldReject_WhenAmountIsNotMultipleOfPointUnit(long amount) {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, 1000L);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, 1000L);
 
     // when & then
     assertThatThrownBy(() -> userPoint.use(amount))
@@ -59,7 +60,8 @@ class UserPointTest {
   @DisplayName("보유 포인트보다 많은 금액을 사용할 수 없다.")
   void use_ShouldReject_WhenAmountExceedsCurrentPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, USE_POINT_UNIT);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, USE_POINT_UNIT);
 
     // when & then
     assertThatThrownBy(() -> userPoint.use(USE_POINT_UNIT * 2))
@@ -71,7 +73,8 @@ class UserPointTest {
   @DisplayName("보유 포인트를 모두 사용할 수 있다.")
   void use_ShouldSucceed_WhenAmountEqualsCurrentPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, USE_POINT_UNIT * 3);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, USE_POINT_UNIT * 3);
 
     // when
     UserPoint used = userPoint.use(USE_POINT_UNIT * 3);
@@ -84,7 +87,8 @@ class UserPointTest {
   @DisplayName("최대 보유 가능 포인트는 " + MAX_POINT + "원이다.")
   void charge_ShouldReject_WhenExceedingMaxPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, MAX_POINT - USE_POINT_UNIT);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - USE_POINT_UNIT);
 
     // when & then
     assertThatThrownBy(() -> userPoint.charge(USE_POINT_UNIT + 1))
@@ -96,7 +100,8 @@ class UserPointTest {
   @DisplayName("최대 포인트까지만 충전할 수 있다.")
   void charge_ShouldSucceed_WhenResultEqualsMaxPoint() {
     // given
-    UserPoint userPoint = UserPoint.of(USER_ID, MAX_POINT - 100L);
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - 100L);
 
     // when
     UserPoint charged = userPoint.charge(100L);
