@@ -19,6 +19,12 @@ public record PointHistory(
   }
 
   public static PointHistory forUse(long userId, long amount) {
-    return null;
+    return new PointHistory(
+        0L,
+        userId,
+        amount,
+        TransactionType.USE,
+        System.currentTimeMillis()
+    );
   }
 }
