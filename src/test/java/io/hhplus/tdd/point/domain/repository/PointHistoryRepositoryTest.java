@@ -6,17 +6,26 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.point.domain.model.TransactionType;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class PointHistoryRepositoryTest {
 
+  private PointHistoryTable pointHistoryTable;
+
+  private PointHistoryRepository pointHistoryRepository;
+
+  @BeforeEach
+  void setUp() {
+    pointHistoryTable = new PointHistoryTable();
+    pointHistoryRepository = new PointHistoryRepository(pointHistoryTable);
+  }
+
   @Test
   @DisplayName("userId에 해당하는 포인트 이력을 정상적으로 조회한다.")
   void readHistories() {
     // given
-    PointHistoryTable pointHistoryTable = new PointHistoryTable();
-    PointHistoryRepository pointHistoryRepository = new PointHistoryRepository(pointHistoryTable);
     long userId = 1L;
     long currentTimestamp1 = System.currentTimeMillis();
     long currentTimestamp2 = System.currentTimeMillis() + 1000L;
@@ -38,8 +47,6 @@ class PointHistoryRepositoryTest {
   @DisplayName("포인트 이력을 정상적으로 저장한다.")
   void save() {
     // given
-    PointHistoryTable pointHistoryTable = new PointHistoryTable();
-    PointHistoryRepository pointHistoryRepository = new PointHistoryRepository(pointHistoryTable);
     long userId = 1L;
     long amount = 1000L;
     PointHistory pointHistory = PointHistory.forCharge(userId, amount);
