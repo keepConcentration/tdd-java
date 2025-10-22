@@ -9,14 +9,14 @@ public record PointHistory(
 ) {
 
   public static PointHistory forCharge(long userId, long amount) {
-    return createHistory(userId, amount, TransactionType.CHARGE);
+    return create(userId, amount, TransactionType.CHARGE);
   }
 
   public static PointHistory forUse(long userId, long amount) {
-    return createHistory(userId, amount, TransactionType.USE);
+    return create(userId, amount, TransactionType.USE);
   }
 
-  private static PointHistory createHistory(long userId, long amount, TransactionType type) {
+  private static PointHistory create(long userId, long amount, TransactionType type) {
     return new PointHistory(
         0L,
         userId,
