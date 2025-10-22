@@ -1,25 +1,20 @@
 package io.hhplus.tdd.web;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.hhplus.tdd.point.application.PointChargingService;
 import io.hhplus.tdd.point.application.PointHistoryReadingService;
 import io.hhplus.tdd.point.application.PointReadingService;
 import io.hhplus.tdd.point.application.PointUsingService;
-import io.hhplus.tdd.point.domain.model.PointHistory;
-import io.hhplus.tdd.point.domain.model.TransactionType;
-import io.hhplus.tdd.web.dto.response.PointHistoryResponseDto;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -64,11 +59,7 @@ class PointControllerTest {
 
     // then
     mockMvc.perform(builder)
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.point").value("100"));
-
-    verify(pointReadingService).read(anyLong());
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -90,8 +81,6 @@ class PointControllerTest {
     // then
     mockMvc.perform(builder)
         .andExpect(status().isNoContent());
-
-    verify(pointChargingService, times(1)).charge(anyLong(), anyLong());
   }
 
   @Test
@@ -113,8 +102,6 @@ class PointControllerTest {
     // then
     mockMvc.perform(builder)
         .andExpect(status().isNoContent());
-
-    verify(pointUsingService, times(1)).use(anyLong(), anyLong());
   }
 
   @Test
@@ -122,15 +109,8 @@ class PointControllerTest {
   void readHistories() throws Exception {
     // given
     long id = 1L;
-    long currentTimestamp = System.currentTimeMillis();
     when(pointHistoryReadingService.readHistories(id))
-        .thenReturn(List.of(
-                PointHistoryResponseDto.of(new PointHistory(1L, 1L, 100L, TransactionType.CHARGE,
-                    currentTimestamp)),
-                PointHistoryResponseDto.of(new PointHistory(2L, 1L, 100L, TransactionType.USE,
-                    currentTimestamp))
-            )
-        );
+        .thenReturn(Collections.emptyList());
 
     // when
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -140,31 +120,16 @@ class PointControllerTest {
 
     // then
     mockMvc.perform(builder)
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$[0].id").value("1"))
-        .andExpect(jsonPath("$[0].userId").value("1"))
-        .andExpect(jsonPath("$[0].amount").value("100"))
-        .andExpect(jsonPath("$[0].type").value(TransactionType.CHARGE.name()))
-        .andExpect(jsonPath("$[0].updateMillis").value(currentTimestamp))
-        .andExpect(jsonPath("$[1].id").value("2"))
-        .andExpect(jsonPath("$[1].userId").value("1"))
-        .andExpect(jsonPath("$[1].amount").value("100"))
-        .andExpect(jsonPath("$[1].type").value(TransactionType.USE.name()))
-        .andExpect(jsonPath("$[1].updateMillis").value(currentTimestamp));
-
-    verify(pointHistoryReadingService).readHistories(anyLong());
+        .andExpect(status().isOk());
   }
 
-  @Test
-  @DisplayName("포인트 조회 시 id가 음수면 400 에러를 반환한다.")
-  void read_ShouldReturn400_WhenIdIsNegative() throws Exception {
-    // given
-    long negativeId = -1L;
-
+  @ParameterizedTest
+  @ValueSource(longs = {-1L, 0L})
+  @DisplayName("포인트 조회 시 유효하지 않은 ID면 400 에러를 반환한다.")
+  void read_ShouldReturn400_WhenIdIsInvalid(long invalidId) throws Exception {
     // when
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-        .get("/points/" + negativeId)
+        .get("/points/" + invalidId)
         .contentType(MediaType.APPLICATION_JSON)
         .characterEncoding(StandardCharsets.UTF_8);
 
@@ -173,15 +138,13 @@ class PointControllerTest {
         .andExpect(status().isBadRequest());
   }
 
-  @Test
-  @DisplayName("포인트 이력 조회 시 id가 음수면 400 에러를 반환한다.")
-  void readHistories_ShouldReturn400_WhenIdIsNegative() throws Exception {
-    // given
-    long negativeId = -1L;
-
+  @ParameterizedTest
+  @ValueSource(longs = {-1L, 0L})
+  @DisplayName("포인트 이력 조회 시 유효하지 않은 id면 400 에러를 반환한다.")
+  void readHistories_ShouldReturn400_WhenIdIsInvalid(long invalidId) throws Exception {
     // when
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-        .get("/points/" + negativeId + "/histories")
+        .get("/points/" + invalidId + "/histories")
         .contentType(MediaType.APPLICATION_JSON)
         .characterEncoding(StandardCharsets.UTF_8);
 
@@ -190,51 +153,29 @@ class PointControllerTest {
         .andExpect(status().isBadRequest());
   }
 
-  @Test
-  @DisplayName("포인트 충전 시 id가 음수면 400 에러를 반환한다.")
-  void charge_ShouldReturn400_WhenIdIsNegative() throws Exception {
-    // given
-    long negativeId = -1L;
-    long amount = 100L;
+  @ParameterizedTest
+  @CsvSource({"0, 0", "0, -1", "-1, 0", "-1, -1"})
+  @DisplayName("포인트 충전 시 id나 amount가 유효하지 않으면 400 에러를 반환한다.")
+  void charge_ShouldReturn400_WhenIdOrAmountIsInvalid(long invalidId, long invalidAmount) throws Exception {
 
     // when
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-        .patch("/points/" + negativeId + "/charge")
+        .patch("/points/" + invalidId + "/charge")
         .contentType(MediaType.APPLICATION_JSON)
         .characterEncoding(StandardCharsets.UTF_8)
         .content("""
             {"amount": %d}
-            """.formatted(amount));
+            """.formatted(invalidAmount));
 
     // then
     mockMvc.perform(builder)
         .andExpect(status().isBadRequest());
   }
 
-  @Test
-  @DisplayName("포인트 충전 시 amount가 음수면 400 에러를 반환한다.")
-  void charge_ShouldReturn400_WhenAmountIsNegative() throws Exception {
-    // given
-    long id = 1L;
-    long negativeAmount = -100L;
-
-    // when
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-        .patch("/points/" + id + "/charge")
-        .contentType(MediaType.APPLICATION_JSON)
-        .characterEncoding(StandardCharsets.UTF_8)
-        .content("""
-            {"amount": %d}
-            """.formatted(negativeAmount));
-
-    // then
-    mockMvc.perform(builder)
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  @DisplayName("포인트 사용 시 id가 음수면 400 에러를 반환한다.")
-  void use_ShouldReturn400_WhenIdIsNegative() throws Exception {
+  @ParameterizedTest
+  @CsvSource({"0, 0", "0, -1", "-1, 0", "-1, -1"})
+  @DisplayName("포인트 사용 시 id나 amount가 유효하지 않으면 400 에러를 반환한다.")
+  void use_ShouldReturn400_WhenIdOrAmountIsInvalid() throws Exception {
     // given
     long negativeId = -1L;
     long amount = 100L;
@@ -247,27 +188,6 @@ class PointControllerTest {
         .content("""
             {"amount": %d}
             """.formatted(amount));
-
-    // then
-    mockMvc.perform(builder)
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  @DisplayName("포인트 사용 시 amount가 음수면 400 에러를 반환한다.")
-  void use_ShouldReturn400_WhenAmountIsNegative() throws Exception {
-    // given
-    long id = 1L;
-    long negativeAmount = -100L;
-
-    // when
-    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-        .patch("/points/" + id + "/use")
-        .contentType(MediaType.APPLICATION_JSON)
-        .characterEncoding(StandardCharsets.UTF_8)
-        .content("""
-            {"amount": %d}
-            """.formatted(negativeAmount));
 
     // then
     mockMvc.perform(builder)

@@ -1,6 +1,8 @@
 package io.hhplus.tdd.common.exception;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,9 +24,13 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(
       ConstraintViolationException e) {
+    String message = e.getConstraintViolations().stream()
+        .map(ConstraintViolation::getMessage)
+        .collect(Collectors.joining(", "));
+    ErrorResponse errorResponse = new ErrorResponse("INVALID_INPUT", message);
     return ResponseEntity
         .status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorResponse("error", "errorMessage"));
+        .body(errorResponse);
   }
 
   @ExceptionHandler(value = Exception.class)
