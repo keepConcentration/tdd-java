@@ -11,12 +11,12 @@ public class LockManager {
 
   private final Map<Long, Lock> locks = new ConcurrentHashMap<>();
 
-  private Lock getLock(long id) {
-    return locks.computeIfAbsent(id, lockId -> new ReentrantLock());
+  private Lock getLock(long key) {
+    return locks.computeIfAbsent(key, lockKey -> new ReentrantLock());
   }
 
-  public void executeWithLock(long id, Runnable runnable) {
-    Lock lock = getLock(id);
+  public void executeWithLock(long key, Runnable runnable) {
+    Lock lock = getLock(key);
     lock.lock();
     try {
       runnable.run();
