@@ -2,6 +2,7 @@ package io.hhplus.tdd.point.application;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 import io.hhplus.tdd.point.domain.model.UserPoint;
 import io.hhplus.tdd.point.domain.service.PointHistoryService;
 import io.hhplus.tdd.point.domain.service.PointService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,15 @@ class PointUsingServiceTest {
 
   @Mock
   private PointHistoryService pointHistoryService;
+
+  @BeforeEach
+  void setUp() {
+    doAnswer(invocation -> {
+      Runnable runnable = invocation.getArgument(1);
+      runnable.run();
+      return null;
+    }).when(pointService).executeWithLock(anyLong(), any(Runnable.class));
+  }
 
   @Test
   @DisplayName("포인트를 정상적으로 사용한다.")

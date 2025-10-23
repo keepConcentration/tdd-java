@@ -16,11 +16,13 @@ public class PointChargingService {
   private final PointHistoryService pointHistoryService;
 
   public void charge(long userId, long amount) {
-    UserPoint userPoint = pointService.read(userId);
-    UserPoint chargedPoint = userPoint.charge(amount);
+    pointService.executeWithLock(userId, () -> {
+      UserPoint userPoint = pointService.read(userId);
+      UserPoint chargedPoint = userPoint.charge(amount);
 
-    pointService.update(chargedPoint);
+      pointService.update(chargedPoint);
 
-    pointHistoryService.save(PointHistory.forCharge(userId, amount));
+      pointHistoryService.save(PointHistory.forCharge(userId, amount));
+    });
   }
 }
