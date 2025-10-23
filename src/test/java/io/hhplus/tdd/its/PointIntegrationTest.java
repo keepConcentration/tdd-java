@@ -1,8 +1,10 @@
 package io.hhplus.tdd.its;
 
+import static io.hhplus.tdd.point.domain.model.PointPolicy.MAX_POINT;
 import static io.hhplus.tdd.point.domain.model.PointPolicy.USE_POINT_UNIT;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.hhplus.tdd.common.exception.ErrorCode;
 import io.hhplus.tdd.point.domain.model.TransactionType;
 import io.hhplus.tdd.web.dto.request.PointChargeRequestDto;
 import io.hhplus.tdd.web.dto.request.PointUseRequestDto;
@@ -215,5 +217,73 @@ class PointIntegrationTest {
 
     // 포인트 일관성 검증
     assertThat(totalCharged - totalUsed).isEqualTo(pointResponse.getBody().getPoint());
+  }
+
+  @Test
+  @Order(8)
+  @DisplayName("잔고가 부족하면 포인트 사용이 실패한다.")
+  void useInsufficientPoint() {
+    // given
+    ResponseEntity<PointResponseDto> pointResponse = restTemplate.getForEntity(
+        "/points/{id}", PointResponseDto.class, USER_ID);
+    long currentPoint = pointResponse.getBody().getPoint();
+
+    // when
+    PointUseRequestDto request = new PointUseRequestDto(currentPoint + USE_POINT_UNIT);
+    ResponseEntity<String> response = restTemplate.exchange(
+        "/points/{id}/use",
+        HttpMethod.PATCH,
+        new HttpEntity<>(request),
+        String.class,
+        USER_ID);
+
+    // then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).contains(ErrorCode.INSUFFICIENT_POINT.getMessage());
+  }
+
+  @Test
+  @Order(9)
+  @DisplayName(USE_POINT_UNIT + "원 단위가 아닌 금액은 사용할 수 없다.")
+  void useInvalidPointUnit() {
+    // given
+    long invalidAmount = USE_POINT_UNIT + 1;
+
+    // when
+    PointUseRequestDto request = new PointUseRequestDto(invalidAmount);
+    ResponseEntity<String> response = restTemplate.exchange(
+        "/points/{id}/use",
+        HttpMethod.PATCH,
+        new HttpEntity<>(request),
+        String.class,
+        USER_ID);
+
+    // then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).contains(ErrorCode.INVALID_POINT_UNIT.getMessage());
+  }
+
+  @Test
+  @Order(10)
+  @DisplayName("최대 포인트를 초과하여 충전할 수 없다.")
+  void chargeExceedingMaxPoint() {
+    // given
+    ResponseEntity<PointResponseDto> pointResponse = restTemplate.getForEntity(
+        "/points/{id}", PointResponseDto.class, USER_ID);
+    long currentPoint = pointResponse.getBody().getPoint();
+
+    // when
+    long excessAmount = MAX_POINT - currentPoint + USE_POINT_UNIT;
+    PointChargeRequestDto request = new PointChargeRequestDto(excessAmount);
+    ResponseEntity<String> response = restTemplate.exchange(
+        "/points/{id}/charge",
+        HttpMethod.PATCH,
+        new HttpEntity<>(request),
+        String.class,
+        USER_ID);
+
+    // then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).contains(ErrorCode.EXCEED_MAX_POINT.getMessage());
   }
 }
