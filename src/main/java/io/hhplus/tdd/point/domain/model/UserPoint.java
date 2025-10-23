@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point.domain.model;
 
 import static io.hhplus.tdd.point.domain.model.PointPolicy.MAX_POINT;
+import static io.hhplus.tdd.point.domain.model.PointPolicy.MIN_CHARGE_AMOUNT;
 import static io.hhplus.tdd.point.domain.model.PointPolicy.USE_POINT_UNIT;
 
 import io.hhplus.tdd.common.exception.BusinessException;
@@ -21,6 +22,7 @@ public record UserPoint(
   }
 
   public UserPoint charge(long amount) {
+    validateMinChargeAmount(amount);
     long newPoint = point + amount;
     validateMaxPoint(newPoint);
     return create(id, newPoint);
@@ -52,6 +54,12 @@ public record UserPoint(
   private static void validateSufficientPoint(long point) {
     if (point < 0) {
       throw new BusinessException(ErrorCode.INSUFFICIENT_POINT);
+    }
+  }
+
+  private static void validateMinChargeAmount(long amount) {
+    if (amount < MIN_CHARGE_AMOUNT) {
+      throw new BusinessException(ErrorCode.BELOW_MIN_CHARGE_AMOUNT);
     }
   }
 }

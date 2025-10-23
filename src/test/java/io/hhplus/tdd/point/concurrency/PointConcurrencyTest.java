@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.concurrency;
 
+import static io.hhplus.tdd.point.domain.model.PointPolicy.MIN_CHARGE_AMOUNT;
 import static io.hhplus.tdd.point.domain.model.PointPolicy.USE_POINT_UNIT;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +32,7 @@ public class PointConcurrencyTest {
   void testConcurrentPointCharging() {
     // given
     long userId = 1L;
-    long amount = USE_POINT_UNIT;
+    long amount = MIN_CHARGE_AMOUNT;
     int concurrentRequests = 100;
 
     ExecutorService executor = Executors.newFixedThreadPool(concurrentRequests);
@@ -90,7 +91,7 @@ public class PointConcurrencyTest {
     // given
     long user1Id = 3L;
     long user2Id = 4L;
-    long chargeAmount = USE_POINT_UNIT;
+    long chargeAmount = MIN_CHARGE_AMOUNT;
     int requestsPerUser = 5;
 
     ExecutorService executor = Executors.newFixedThreadPool(10);

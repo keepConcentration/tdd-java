@@ -89,10 +89,10 @@ class UserPointTest {
   void charge_ShouldReject_WhenExceedingMaxPoint() {
     // given
     long userId = 1L;
-    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - USE_POINT_UNIT);
+    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - MIN_CHARGE_AMOUNT);
 
     // when & then
-    assertThatThrownBy(() -> userPoint.charge(USE_POINT_UNIT + 1))
+    assertThatThrownBy(() -> userPoint.charge(MIN_CHARGE_AMOUNT + 1))
         .isInstanceOf(BusinessException.class)
         .hasMessage(ErrorCode.EXCEED_MAX_POINT.getMessage());
   }
@@ -102,10 +102,10 @@ class UserPointTest {
   void charge_ShouldSucceed_WhenResultEqualsMaxPoint() {
     // given
     long userId = 1L;
-    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - 100L);
+    UserPoint userPoint = UserPoint.of(userId, MAX_POINT - MIN_CHARGE_AMOUNT);
 
     // when
-    UserPoint charged = userPoint.charge(100L);
+    UserPoint charged = userPoint.charge(MIN_CHARGE_AMOUNT);
 
     // then
     assertThat(charged.point()).isEqualTo(MAX_POINT);

@@ -1,6 +1,7 @@
 package io.hhplus.tdd.its;
 
 import static io.hhplus.tdd.point.domain.model.PointPolicy.MAX_POINT;
+import static io.hhplus.tdd.point.domain.model.PointPolicy.MIN_CHARGE_AMOUNT;
 import static io.hhplus.tdd.point.domain.model.PointPolicy.USE_POINT_UNIT;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +36,7 @@ class PointIntegrationTest {
   private static final long USER_ID = 1L;
   private static final long INITIAL_CHARGE_AMOUNT = 1000L;
   private static final long USE_AMOUNT = USE_POINT_UNIT;
-  private static final long ADDITIONAL_CHARGE_AMOUNT = USE_AMOUNT * 2;
+  private static final long ADDITIONAL_CHARGE_AMOUNT = MIN_CHARGE_AMOUNT;
 
   @Test
   @Order(1)
