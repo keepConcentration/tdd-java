@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.hhplus.tdd.common.concurrency.LockManager;
 import io.hhplus.tdd.point.domain.model.UserPoint;
 import io.hhplus.tdd.point.domain.service.PointHistoryService;
 import io.hhplus.tdd.point.domain.service.PointService;
@@ -31,13 +32,16 @@ class PointUsingServiceTest {
   @Mock
   private PointHistoryService pointHistoryService;
 
+  @Mock
+  private LockManager lockManager;
+
   @BeforeEach
   void setUp() {
     doAnswer(invocation -> {
       Runnable runnable = invocation.getArgument(1);
       runnable.run();
       return null;
-    }).when(pointService).executeWithLock(anyLong(), any(Runnable.class));
+    }).when(lockManager).executeWithLock(anyLong(), any(Runnable.class));
   }
 
   @Test

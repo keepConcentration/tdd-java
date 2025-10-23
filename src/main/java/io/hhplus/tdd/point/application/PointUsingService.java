@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point.application;
 
+import io.hhplus.tdd.common.concurrency.LockManager;
 import io.hhplus.tdd.point.domain.model.PointHistory;
 import io.hhplus.tdd.point.domain.model.UserPoint;
 import io.hhplus.tdd.point.domain.service.PointHistoryService;
@@ -15,8 +16,10 @@ public class PointUsingService {
 
   private final PointHistoryService pointHistoryService;
 
+  private final LockManager lockManager;
+
   public void use(long userId, long amount) {
-    pointService.executeWithLock(userId, () -> {
+    lockManager.executeWithLock(userId, () -> {
       UserPoint userPoint = pointService.read(userId);
       UserPoint usedUserPoint = userPoint.use(amount);
       pointService.update(usedUserPoint);
