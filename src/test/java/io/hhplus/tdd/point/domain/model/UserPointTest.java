@@ -1,6 +1,7 @@
 package io.hhplus.tdd.point.domain.model;
 
 import static io.hhplus.tdd.point.domain.model.PointPolicy.MAX_POINT;
+import static io.hhplus.tdd.point.domain.model.PointPolicy.MIN_CHARGE_AMOUNT;
 import static io.hhplus.tdd.point.domain.model.PointPolicy.USE_POINT_UNIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -108,5 +109,33 @@ class UserPointTest {
 
     // then
     assertThat(charged.point()).isEqualTo(MAX_POINT);
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {1L, 50L, 99L, 499L})
+  @DisplayName("최소 충전 금액(" + MIN_CHARGE_AMOUNT + "원)보다 적은 금액은 충전할 수 없다.")
+  void charge_ShouldReject_WhenAmountIsLessThanMinChargeAmount(long amount) {
+    // given
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, 1000L);
+
+    // when & then
+    assertThatThrownBy(() -> userPoint.charge(amount))
+        .isInstanceOf(BusinessException.class)
+        .hasMessage(ErrorCode.BELOW_MIN_CHARGE_AMOUNT.getMessage());
+  }
+
+  @Test
+  @DisplayName("최소 충전 금액(" + MIN_CHARGE_AMOUNT + "원)부터 충전할 수 있다.")
+  void charge_ShouldSucceed_WhenAmountEqualsMinChargeAmount() {
+    // given
+    long userId = 1L;
+    UserPoint userPoint = UserPoint.of(userId, 1000L);
+
+    // when
+    UserPoint charged = userPoint.charge(MIN_CHARGE_AMOUNT);
+
+    // then
+    assertThat(charged.point()).isEqualTo(1000L + MIN_CHARGE_AMOUNT);
   }
 }
