@@ -1,0 +1,56 @@
+package io.hhplus.tdd.point.domain.repository;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.point.domain.model.UserPoint;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+class UserPointRepositoryTest {
+
+  @Test
+  @DisplayName("특정 회원의 포인트만 올바르게 조회한다.")
+  void read() {
+    // given
+    long id = 1L;
+    long amount = 100L;
+    UserPointTable userPointTable = new UserPointTable();
+    UserPointRepository userPointRepository = new UserPointRepository(userPointTable);
+
+    UserPoint savedUserPoint1 = UserPoint.of(id, amount);
+    UserPoint savedUserPoint2 = UserPoint.of(2L, amount);
+
+    userPointRepository.save(savedUserPoint1);
+    userPointRepository.save(savedUserPoint2);
+
+    // when
+    UserPoint userPoint = userPointRepository.read(id);
+
+    // then
+    assertNotNull(userPoint);
+    assertEquals(id, userPoint.id());
+    assertEquals(amount, userPoint.point());
+  }
+
+  @Test
+  @DisplayName("저장 후 조회했을 때 같은 UserPoint를 반환한다.")
+  void saveAndRead() {
+    // given
+    long id = 1L;
+    long amount = 100L;
+    UserPointTable userPointTable = new UserPointTable();
+    UserPointRepository userPointRepository = new UserPointRepository(userPointTable);
+
+    UserPoint savedUserPoint = UserPoint.of(id, amount);
+
+    // when
+    userPointRepository.save(savedUserPoint);
+    UserPoint userPoint = userPointRepository.read(id);
+
+    // then
+    assertNotNull(userPoint);
+    assertEquals(savedUserPoint.id(), userPoint.id());
+    assertEquals(savedUserPoint.point(), userPoint.point());
+  }
+}
